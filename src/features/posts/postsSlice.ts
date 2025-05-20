@@ -35,7 +35,12 @@ const postsSlice = createSlice({
       }
     },
   },
+  selectors: {
+    selectAllPosts: (postsState) => postsState,
+    selectPostById: (postsState, postId: string) => postsState.find((post) => post.id === postId),
+  },
 })
 
 export const { addPost, editPost } = postsSlice.actions
+export const { selectAllPosts, selectPostById } = postsSlice.selectors
 export const postsReducer = postsSlice.reducer
