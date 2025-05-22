@@ -1,6 +1,8 @@
 import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit'
 import { sub } from 'date-fns'
 
+import { userLoggedOut } from '@/features/auth/authSlice'
+
 export interface Post {
   id: string
   title: string
@@ -85,6 +87,12 @@ const postsSlice = createSlice({
         existingPost.reactions[reaction]++
       }
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(userLoggedOut, () => {
+      // Clear out the list of posts whenever the user logs out
+      return []
+    })
   },
   selectors: {
     selectAllPosts: (postsState) => postsState,
