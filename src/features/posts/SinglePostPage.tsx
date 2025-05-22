@@ -1,5 +1,7 @@
-import { useAppSelector } from '@/app/hooks'
 import { Link, useParams } from 'react-router-dom'
+
+import { useAppSelector } from '@/app/hooks'
+import { selectCurrentUsername } from '@/features/auth/authSlice'
 import { selectPostById } from './postsSlice'
 import { PostAuthor } from './PostAuthor'
 import { TimeAgo } from '@/components/TimeAgo'
@@ -9,6 +11,7 @@ export const SinglePostPage = () => {
   const { postId } = useParams()
 
   const currentPost = useAppSelector((state) => selectPostById(state, postId!))
+  const currentUsername = useAppSelector(selectCurrentUsername)!
 
   if (!currentPost) {
     return (
@@ -17,6 +20,8 @@ export const SinglePostPage = () => {
       </section>
     )
   }
+
+  const isEditable = currentUsername === currentPost.user
 
   return (
     <section>
@@ -30,9 +35,11 @@ export const SinglePostPage = () => {
 
         <ReactionButtons post={currentPost} />
 
-        <Link to={`/editPost/${currentPost.id}`} className="button">
-          Edit post
-        </Link>
+        {isEditable && (
+          <Link to={`/editPost/${currentPost.id}`} className="button">
+            Edit post
+          </Link>
+        )}
       </article>
     </section>
   )

@@ -4,11 +4,11 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks'
 
 import { addPost } from './postsSlice'
 import { selectAllUsers } from '../users/usersSlice'
+import { selectCurrentUsername } from '../auth/authSlice'
 
 interface AddPostFormFields extends HTMLFormControlsCollection {
   postTitle: HTMLInputElement
   postContent: HTMLTextAreaElement
-  postAuthor: HTMLTextAreaElement
 }
 
 interface AddPostFormElements extends HTMLFormElement {
@@ -17,7 +17,7 @@ interface AddPostFormElements extends HTMLFormElement {
 
 export const AddPostForm = () => {
   const dispatch = useAppDispatch()
-  const users = useAppSelector(selectAllUsers)
+  const userId = useAppSelector(selectCurrentUsername)!
 
   const handleSubmit = (e: React.FormEvent<AddPostFormElements>) => {
     e.preventDefault()
@@ -25,18 +25,11 @@ export const AddPostForm = () => {
     const { elements } = e.currentTarget
     const title = elements.postTitle.value
     const content = elements.postContent.value
-    const userId = elements.postAuthor.value
 
     dispatch(addPost(title, content, userId))
 
     e.currentTarget.reset()
   }
-
-  const usersOptions = users.map(user => (
-    <option key={user.id} value={user.id}>
-      {user.name}
-    </option>
-  ))
 
   return (
     <section>
@@ -44,12 +37,6 @@ export const AddPostForm = () => {
       <form onSubmit={handleSubmit}>
         <label htmlFor="postTitle">Post title:</label>
         <input type="text" id="postTitle" defaultValue="" required />
-
-        <label htmlFor="postAuthor">Author:</label>
-        <select id="postAuthor" name="postAuthor" required>
-          <option value=""></option>
-          {usersOptions}
-        </select>
 
         <label htmlFor="postContent">Content:</label>
         <textarea id="postContent" name="postContent" defaultValue="" required />
